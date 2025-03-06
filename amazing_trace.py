@@ -4,70 +4,34 @@ import numpy as np
 from matplotlib.ticker import MaxNLocator
 import time
 import os
+import subprocess
+import platform
+import re
 
 def execute_traceroute(destination):
-    """
-    Executes a traceroute to the specified destination and returns the output.
-
-    Args:
-        destination (str): The hostname or IP address to trace
-
-    Returns:
-        str: The raw output from the traceroute command
-    """
-    # Your code here
-    # Hint: Use the subprocess module to run the traceroute command
-    # Make sure to handle potential errors
-
-    # Remove this line once you implement the function,
-    # and don't forget to *return* the output
-    pass
+    # Depending on what platform is being used, the command will be different for each one
+    if platform.system().lower() == "windows":
+        command = ["tracert", destination]
+    # Most typically Linux is being used if Windows is not, so this is the command
+    else:
+        command = ["traceroute -I", destination]
+    
+    # Will attempt to run and gather the information from the command above, but will give an error if one occurs
+    try:
+        result = subprocess.run(command, capture_output=True, text=True, check=True)
+        return result.stdout
+    except subprocess.CalledProcessError as e:
+        return f"There was an error running traceroute o(╥﹏╥)o: {e}"
 
 def parse_traceroute(traceroute_output):
-    """
-    Parses the raw traceroute output into a structured format.
+    # Spilts the lines from execute_tracroute so they can be used in regular expession matching
+    lines = traceroute_output.splitlines()
+    info_list = []
 
-    Args:
-        traceroute_output (str): Raw output from the traceroute command
-
-    Returns:
-        list: A list of dictionaries, each containing information about a hop:
-            - 'hop': The hop number (int)
-            - 'ip': The IP address of the router (str or None if timeout)
-            - 'hostname': The hostname of the router (str or None if same as ip)
-            - 'rtt': List of round-trip times in ms (list of floats, None for timeouts)
-
-    Example:
-    ```
-        [
-            {
-                'hop': 1,
-                'ip': '172.21.160.1',
-                'hostname': 'HELDMANBACK.mshome.net',
-                'rtt': [0.334, 0.311, 0.302]
-            },
-            {
-                'hop': 2,
-                'ip': '10.103.29.254',
-                'hostname': None,
-                'rtt': [3.638, 3.630, 3.624]
-            },
-            {
-                'hop': 3,
-                'ip': None,  # For timeout/asterisk
-                'hostname': None,
-                'rtt': [None, None, None]
-            }
-        ]
-    ```
-    """
-    # Your code here
-    # Hint: Use regular expressions to extract the relevant information
-    # Handle timeouts (asterisks) appropriately
-
-    # Remove this line once you implement the function,
-    # and don't forget to *return* the output
-    pass
+    for line in lines:
+        # Defining what the regular expression match is
+        #match = re.search(r"\d+", line)
+        pass
 
 # ============================================================================ #
 #                    DO NOT MODIFY THE CODE BELOW THIS LINE                    #
