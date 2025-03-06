@@ -34,10 +34,10 @@ def parse_traceroute(traceroute_output):
         if match:
             hop_number = match.group(1)
             host_name = match.group(2)
-            ip_address = match.group(3) #and some more conditions so it returns none if it timesout and blah blah blah
+            ip_address = match.group(3) if match.group(3) else None
             time_section = match.group(4)
 
-            # Unsure if this is the best way to handle timeouts
+            # Unsure if this is the best way to handle timeouts but we'll see
             return_times = [float(time) for time in re.findall(r"(\d+\.\d+|\d+) ms", time_section)] if "ms" in time_section else None
 
             info_list.append({
