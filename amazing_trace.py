@@ -30,7 +30,7 @@ def parse_traceroute(traceroute_output):
 
     for line in lines:
         # Defining what the regular expression match is (maybe try to break it up for readabiltiy lol)
-        match = re.search(r"(\d+)\s+([^\s\[]+)?\s*[?:\[\d+\.\d+\.\d+\.\d+)\])?\s*(.*)", line)
+        match = re.search(r"(\d+)\s+([^\s\[]+)?\s*(?:\[(\d+\.\d+\.\d+\.\d+)\])?\s*(.*)", line)
         if match:
             hop_number = match.group(1)
             host_name = match.group(2)
