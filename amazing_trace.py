@@ -29,8 +29,8 @@ def parse_traceroute(traceroute_output):
     info_list = []
 
     for line in lines:
-        # Defining what the regular expression match is
-        #match = re.search(r"\d+", line)
+        # Defining what the regular expression match is (maybe try to break it up)
+        match = re.search(r"\d+\s+([^\s\[]+)?\s*/^[0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+$/\s*.*", line)
         pass
 
 # ============================================================================ #
