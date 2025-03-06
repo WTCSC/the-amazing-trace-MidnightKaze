@@ -29,9 +29,25 @@ def parse_traceroute(traceroute_output):
     info_list = []
 
     for line in lines:
-        # Defining what the regular expression match is (maybe try to break it up)
-        match = re.search(r"\d+\s+([^\s\[]+)?\s*/^[0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+$/\s*.*", line)
-        pass
+        # Defining what the regular expression match is (maybe try to break it up for readabiltiy lol)
+        match = re.search(r"(\d+)\s+([^\s\[]+)?\s*[?:\[\d+\.\d+\.\d+\.\d+)\])?\s*(.*)", line)
+        if match:
+            hop_number = match.group(1)
+            host_name = match.group(2)
+            ip_address = match.group(3) #and some more conditions so it returns none if it timesout and blah blah blah
+            time_section = match.group(4)
+
+            # Unsure if this is the best way to handle timeouts
+            return_times = [float(time) for time in re.findall(r"(\d+\.\d+|\d+) ms", time_section)] if "ms" in time_section else None
+
+            info_list.append({
+                'hop': hop_number,
+                'ip': ip_address,
+                'hostname': None if ip_address == host_name else host_name,
+                "rtt": return_times
+            })
+    
+    return info_list
 
 # ============================================================================ #
 #                    DO NOT MODIFY THE CODE BELOW THIS LINE                    #
