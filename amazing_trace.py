@@ -14,7 +14,7 @@ def execute_traceroute(destination):
         command = ["tracert", destination]
     # Most typically Linux is being used if Windows is not, so this is the command
     else:
-        command = ["traceroute -I", destination]
+        command = ["traceroute", "-I", destination]
     
     # Will attempt to run and gather the information from the command above, but will give an error if one occurs
     try:
@@ -28,24 +28,66 @@ def parse_traceroute(traceroute_output):
     lines = traceroute_output.splitlines()
     info_list = []
 
+    # A matching pattern to help find the start of a line
+    hop_pattern = re.compile(r"^\s*(\d+)")
+
     for line in lines:
-        # Defining what the regular expression match is (maybe try to break it up for readabiltiy lol)
-        match = re.search(r"(\d+)\s+([^\s\[]+)?\s*(?:\[(\d+\.\d+\.\d+\.\d+)\])?\s*(.*)", line)
-        if match:
-            hop_number = match.group(1)
-            host_name = match.group(2)
-            ip_address = match.group(3) if match.group(3) else None
-            time_section = match.group(4)
+        # Pulls the hop number from the line
+        hop_match = re.match(hop_pattern, line)
+        if not hop_match:
+            continue
 
-            # Unsure if this is the best way to handle timeouts but we'll see
-            return_times = [float(time) for time in re.findall(r"(\d+\.\d+|\d+) ms", time_section)] if "ms" in time_section else None
+        # Important to int it for the tests
+        hop_number = int(hop_match.group(1))
 
-            info_list.append({
-                'hop': hop_number,
-                'ip': ip_address,
-                'hostname': None if ip_address == host_name else host_name,
-                "rtt": return_times
-            })
+        # Prep for hostname and IP Address pulling
+        hostname = None
+        ip_address = None
+
+        ip_match = re.search(r"([^\s(]+)\s*\((\d+\.\d+\.\d+\.\d+)\)", line)
+        # This will basically try to get both the hostname and the IP at once
+        if ip_match:
+            hostname = ip_match.group(1)
+            ip_address = ip_match.group(2)
+            # But if they are the same...
+            if hostname == ip_address:
+                hostname = None
+        #... it will then try to get the IP alone
+        else:
+            ip_only = re.search(r"(\d+\.\d+\.\d+\.\d+)", line)
+            if ip_only:
+                ip_address = ip_only.group(1)
+
+        # Prep for the return time pulling
+        return_times = []
+
+        time_match = re.finditer(r'([*]|\d+\.\d+|\d+|\<\d+)\s*ms', line)
+        for match in time_match:
+            time = match.group(1)
+            # If the return time is a * then it will show None-- per assignment request
+            if time == "*":
+                return_times.append(None)
+            else:
+                # Accounts for the <1ms if it happens
+                if time.startswith('<'):
+                    time = time[1:]
+                return_times.append(float(time))
+
+        # If theres no value but there's * then we can just assume a timeout occured
+        if not return_times and "*" in line:
+            timeout_number = line.count('*')
+            return_times = [None] * timeout_number
+
+        # Ensures that there's three return times
+        while len(return_times) < 3:
+            return_times.append(None)
+
+        info_list.append({
+            'hop': hop_number,
+            'ip': ip_address,
+            'hostname': hostname,
+            'rtt': return_times
+        })
     
     return info_list
 
