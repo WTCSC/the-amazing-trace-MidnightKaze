@@ -28,7 +28,7 @@ def parse_traceroute(traceroute_output):
     lines = traceroute_output.splitlines()
     info_list = []
 
-    # A matching pattern to help find the start of a line
+    # A matching pattern to help find the start of a line (aka hop number)
     hop_pattern = re.compile(r"^\s*(\d+)")
 
     for line in lines:
@@ -82,6 +82,7 @@ def parse_traceroute(traceroute_output):
         while len(return_times) < 3:
             return_times.append(None)
 
+        # Formats the infomation asked in the format asked
         info_list.append({
             'hop': hop_number,
             'ip': ip_address,

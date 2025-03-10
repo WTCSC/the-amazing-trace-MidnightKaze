@@ -1,14 +1,24 @@
 [![Open in Codespaces](https://classroom.github.com/assets/launch-codespace-2972f46106e565e64193e422d61a12cf1da4916b45550586e14ef0a7c637dd04.svg)](https://classroom.github.com/open-in-codespaces?assignment_repo_id=18567481)
+
 # The Amazing Trace
 
-Ignore this btw :D
+Ever want to condense the information given by a tracert? Well I hope you do now because that's exactly what this script does. It let's you run a tracert (or traceroute depending on the platform) on any IP or Hostname and then it will spit out all of the information into a condensed format!
 
-  1     4 ms     3 ms     3 ms  10.61.3.254
-  2     8 ms     4 ms     3 ms  10.0.0.93
-  3     9 ms     5 ms     4 ms  10.1.5.253
-  4     7 ms     5 ms     7 ms  199.96.184.1
-  5   222 ms     6 ms     6 ms  199.96.187.254
-  6    10 ms     6 ms     5 ms  72.14.194.239
-  7     8 ms     8 ms     6 ms  142.251.49.27
-  8    10 ms     6 ms     5 ms  142.251.61.179
-  9    11 ms     6 ms     5 ms  den08s06-in-f14.1e100.net [142.250.72.14]
+There's also a feature that will take all of the information gathered and make it into a line graph for better data analyzation and visualization.
+
+## Set Up and Installation
+
+There's quite a few dependencies for this script, so I recommend just using the Vagrant file included in the repository for the easist set up. Alternatively, you can use the two commands here to install everything that is needed: 
+
+1. `pip install matplotlib pandas numpy`
+2. `pip install tracert`
+
+Yes, for some reason you do need to install tracert.
+
+To get the actual script, the file you need to clone is `amazing_trace.py`. Use whatever method you want to close the file.
+
+## Features
+There are a few features to take note of, mostly the graph generation!
+
+- __Graphical Generation.__ This feature was included in the assignemnt by my teacher. It will basically just take any tracert and then turn it into a line graph. You can turn it off my commenting out the very bottom section of code.
+- __Version Compatibility.__ Whether you use Windows or Linux, the code will run either way! So no worries about the code exploding if you use either one.
